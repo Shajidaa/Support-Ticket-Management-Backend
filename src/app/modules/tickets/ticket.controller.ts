@@ -4,6 +4,8 @@ import httpStatus from "http-status";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
 import { ticketService } from "./ticket.service";
+import { Ticket } from "./ticket.model";
+import { AppError } from "../../errors/AppError";
 
 // create ticket
 
@@ -46,7 +48,23 @@ const getTicketById = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-const updateTicket = catchAsync(async (req: Request, res: Response) => {});
+const updateTicket = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const payload = req.body;
+
+  const ticket = await Ticket.findById(id);
+  if (!ticket) {
+    throw new AppError(404, "Ticket not found");
+  }
+  const result = await ticketService.updateTicket(id as string, payload);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: " Update the ticket successfully",
+    data: result,
+  });
+});
 const assignTicket = catchAsync(async (req: Request, res: Response) => {});
 export const ticketController = {
   createTicket,

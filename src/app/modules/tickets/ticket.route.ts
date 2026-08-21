@@ -10,7 +10,7 @@ router.get("/", auth("Customer"), ticketController.getAllTickets);
 router.get("/:id", auth("Customer", "Staff"), ticketController.getTicketById);
 
 // update ticket
-router.patch("/:id", auth("Customer", "Staff"), ticketController.updateTicket);
+router.patch("/:id", auth("Customer"), ticketController.updateTicket);
 
 // only for Staff
 router.patch("/:id/assign", auth("Staff"), ticketController.assignTicket);

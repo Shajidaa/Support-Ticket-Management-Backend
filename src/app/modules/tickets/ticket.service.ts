@@ -38,8 +38,18 @@ const getTicketById = async (id: string, customerId: string) => {
   }
   return ticket;
 };
+
+const updateTicket = async (id: string, payload: any) => {
+  const updatedTicket = await Ticket.findByIdAndUpdate(id, payload, {
+    new: true,
+    runValidators: true,
+  });
+  return updatedTicket;
+};
+
 export const ticketService = {
   createdTicketDb,
   getAllTicket,
   getTicketById,
+  updateTicket,
 };
