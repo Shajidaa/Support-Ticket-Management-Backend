@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import { User } from "../user/user.model";
 import config from "../../config";
 import { jwtUtils } from "../../utils/jwt";
-import { SignOptions } from "jsonwebtoken";
+import { JwtPayload, SignOptions } from "jsonwebtoken";
 import { IUser } from "../user/user.interface";
 import { IUserLogin } from "./auth.interface";
 import { AppError } from "../../errors/AppError";
@@ -72,7 +72,35 @@ const login = async (payload: IUserLogin) => {
   );
   return { accessToken, refreshToken };
 };
+const refreshToken = async (refreshToken: string) => {
+  const verifyRefreshToken = jwtUtils.verifyToken(
+    refreshToken,
+    config.jwt_refresh_secret,
+  );
+  if (!verifyRefreshToken.success) {
+    throw new Error(verifyRefreshToken.error);
+  }
+  const { email } = verifyRefreshToken.data as JwtPayload;
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new AppError(404, "Account does not create with this email. ");
+  }
+  const jwtPayload = {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+  };
+  const accessToken = jwtUtils.createToken(
+    jwtPayload,
+    config.jwt_access_secret,
+
+    config.jwt_access_expires_in as SignOptions,
+  );
+  return accessToken;
+};
 export const authService = {
   register,
   login,
+  refreshToken,
 };
