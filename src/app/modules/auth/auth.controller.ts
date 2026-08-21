@@ -27,13 +27,20 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const payload = await req.body;
-  console.log(payload);
+  const { email } = payload;
+
+  const existingUser = await User.findOne({ email });
+
+  if (!existingUser) {
+    throw new AppError(404, "Account does not create with this email. ");
+  }
+  const result = await authService.login(payload);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "User Login successfully",
-    data: null,
+    data: result,
   });
 });
 export const authController = {
