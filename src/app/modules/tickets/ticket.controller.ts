@@ -34,7 +34,18 @@ const getAllTickets = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-const getTicketById = catchAsync(async (req: Request, res: Response) => {});
+const getTicketById = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const customerId = await req.user?.id;
+  const result = await ticketService.getTicketById(id as string, customerId!);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: " Get ticket successfully",
+    data: result,
+  });
+});
 const updateTicket = catchAsync(async (req: Request, res: Response) => {});
 const assignTicket = catchAsync(async (req: Request, res: Response) => {});
 export const ticketController = {
