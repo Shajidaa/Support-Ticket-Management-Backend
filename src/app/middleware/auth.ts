@@ -4,6 +4,7 @@ import { User } from "../modules/user/user.model";
 import config from "../config";
 import { catchAsync } from "../utils/catchAsync";
 import { jwtUtils } from "../utils/jwt";
+import { AppError } from "../errors/AppError";
 
 declare global {
   namespace Express {
@@ -27,12 +28,10 @@ export const auth = (...requiredRoles: ("Customer" | "Staff")[]) => {
         : req.headers.authorization;
 
     if (!token) {
-      res.status(401).json({
-        success: false,
-        message:
-          "You are not logged in. Please log in to access this resource.",
-      });
-      return;
+      throw new AppError(
+        401,
+        "You are not logged in. Please log in to access this resource.",
+      );
     }
 
     const verifiedToken = jwtUtils.verifyToken(token, config.jwt_access_secret);
@@ -44,24 +43,16 @@ export const auth = (...requiredRoles: ("Customer" | "Staff")[]) => {
     const { id, role } = verifiedToken.data as JwtPayload;
 
     if (requiredRoles.length && !requiredRoles.includes(role)) {
-      res.status(403).json({
-        success: false,
-        message:
-          "Forbidden. You don't have permission to access this resource.",
-      });
-      return;
+      throw new AppError(
+        403,
+        "Forbidden. You don't have permission to access this resource.",
+      );
     }
-
     const user = await User.findById(id);
 
     if (!user) {
-      res.status(401).json({
-        success: false,
-        message: "User not found. Please log in again.",
-      });
-      return;
+      throw new AppError(401, "User not found. Please log in again.");
     }
-
     req.user = {
       id: user._id.toString(),
       email: user.email,

@@ -5,14 +5,16 @@ import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import { User } from "../user/user.model";
 import { authService } from "./auth.service";
+import { AppError } from "../../errors/AppError";
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
   const payload = await req.body;
   const { email } = payload;
 
   const existingUser = await User.findOne({ email });
+
   if (existingUser) {
-    throw new Error("User already exits with this mail");
+    throw new AppError(404, "User already exits with this mail");
   }
   const result = await authService.register(payload);
   sendResponse(res, {
