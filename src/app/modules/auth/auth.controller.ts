@@ -6,6 +6,7 @@ import httpStatus from "http-status";
 import { User } from "../user/user.model";
 import { authService } from "./auth.service";
 import { AppError } from "../../errors/AppError";
+import setCookie from "../../utils/cookies";
 
 const registerUser = catchAsync(async (req: Request, res: Response) => {
   const payload = await req.body;
@@ -16,12 +17,25 @@ const registerUser = catchAsync(async (req: Request, res: Response) => {
   if (existingUser) {
     throw new AppError(404, "User already exits with this mail");
   }
-  const result = await authService.register(payload);
+  const { accessToken, refreshToken } = await authService.register(payload);
+  setCookie(
+    res,
+    "accessToken",
+    accessToken,
+    Number(process.env.COOKIE_ACCESS_TOKEN_MAX_AGE),
+  );
+
+  setCookie(
+    res,
+    "refreshToken",
+    refreshToken,
+    Number(process.env.COOKIE_REFRESH_MAX_AGE),
+  );
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
     message: "User created successfully",
-    data: result,
+    data: { accessToken, refreshToken },
   });
 });
 
@@ -34,13 +48,25 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   if (!existingUser) {
     throw new AppError(404, "Account does not create with this email. ");
   }
-  const result = await authService.login(payload);
+  const { accessToken, refreshToken } = await authService.login(payload);
+  setCookie(
+    res,
+    "accessToken",
+    accessToken,
+    Number(process.env.COOKIE_ACCESS_TOKEN_MAX_AGE),
+  );
 
+  setCookie(
+    res,
+    "refreshToken",
+    refreshToken,
+    Number(process.env.COOKIE_REFRESH_MAX_AGE),
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: "User Login successfully",
-    data: result,
+    data: { accessToken, refreshToken },
   });
 });
 export const authController = {
