@@ -9,7 +9,6 @@ import { ticketService } from "./ticket.service";
 
 const createTicket = catchAsync(async (req: Request, res: Response) => {
   const payload = req.body;
-  console.log(req.body);
 
   const customerId = req.user?.id;
   const result = await ticketService.createdTicketDb(
@@ -24,7 +23,17 @@ const createTicket = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const getAllTickets = catchAsync(async (req: Request, res: Response) => {});
+const getAllTickets = catchAsync(async (req: Request, res: Response) => {
+  const customerId = await req.user?.id;
+
+  const result = await ticketService.getAllTicket(req.query, customerId!);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: " Get tickets successfully",
+    data: result,
+  });
+});
 const getTicketById = catchAsync(async (req: Request, res: Response) => {});
 const updateTicket = catchAsync(async (req: Request, res: Response) => {});
 const assignTicket = catchAsync(async (req: Request, res: Response) => {});
