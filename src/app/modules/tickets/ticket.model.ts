@@ -35,6 +35,7 @@ const ticketSchema = new Schema<ITicket>(
   },
   {
     timestamps: true,
+    versionKey: false,
   },
 );
 
