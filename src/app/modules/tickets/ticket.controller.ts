@@ -6,6 +6,7 @@ import { sendResponse } from "../../utils/sendResponse";
 import { ticketService } from "./ticket.service";
 import { Ticket } from "./ticket.model";
 import { AppError } from "../../errors/AppError";
+import { appendFileSync } from "node:fs";
 
 // create ticket
 
@@ -65,7 +66,27 @@ const updateTicket = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-const assignTicket = catchAsync(async (req: Request, res: Response) => {});
+const assignTicket = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const staffId = await req.user?.id!;
+  const status = await req.body;
+  const ticket = await Ticket.findById(id);
+  if (!ticket) {
+    throw new AppError(404, "Ticket not found");
+  }
+
+  const result = await ticketService.assignTicketUpdate(
+    staffId,
+    ticket,
+    status,
+  );
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Ticket assigned successfully",
+    data: result,
+  });
+});
 export const ticketController = {
   createTicket,
   getAllTickets,

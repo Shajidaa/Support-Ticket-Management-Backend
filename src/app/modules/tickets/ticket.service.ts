@@ -46,10 +46,22 @@ const updateTicket = async (id: string, payload: any) => {
   });
   return updatedTicket;
 };
+const assignTicketUpdate = async (
+  staffId: string,
+  ticket: any,
+  status: any,
+) => {
+  ticket.assignedTo = staffId!;
 
+  ticket.status = status.status;
+
+  const update = await ticket.save();
+  return update;
+};
 export const ticketService = {
   createdTicketDb,
   getAllTicket,
   getTicketById,
   updateTicket,
+  assignTicketUpdate,
 };
