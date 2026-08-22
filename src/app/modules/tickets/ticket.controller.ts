@@ -28,8 +28,12 @@ const createTicket = catchAsync(async (req: Request, res: Response) => {
 
 const getAllTickets = catchAsync(async (req: Request, res: Response) => {
   const customerId = await req.user?.id;
-
-  const result = await ticketService.getAllTicket(req.query, customerId!);
+  const role = await req.user?.role;
+  const result = await ticketService.getAllTicket(
+    req.query,
+    customerId!,
+    role as string,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

@@ -6,7 +6,7 @@ import { ticketController } from "./ticket.controller";
 const router = Router();
 
 router.post("/", auth("Customer"), ticketController.createTicket);
-router.get("/", auth("Customer"), ticketController.getAllTickets);
+router.get("/", auth("Customer", "Staff"), ticketController.getAllTickets);
 router.get("/:id", auth("Customer", "Staff"), ticketController.getTicketById);
 
 // update ticket

@@ -5,6 +5,7 @@ import { notFound } from "./app/middleware/notFound";
 import { globalErrorHandler } from "./app/errors/globalErrorHandler";
 import cookieParser from "cookie-parser";
 import { TicketRoutes } from "./app/modules/tickets/ticket.route";
+import { CommentRoutes } from "../comments/comment.route";
 const app: Application = express();
 
 // Middleware
@@ -14,6 +15,7 @@ app.use(cookieParser());
 //  Route
 app.use("/api/v1/auth", AuthRoutes);
 app.use("/api/v1/ticket", TicketRoutes);
+// app.use("/api/v1/comment", CommentRoutes);
 app.get("/", (req: Request, res: Response) => {
   res.json({
     message: "HelpDesk API with TypeScript is running successfully!",

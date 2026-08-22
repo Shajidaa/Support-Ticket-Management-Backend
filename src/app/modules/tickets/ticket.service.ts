@@ -14,16 +14,34 @@ const createdTicketDb = async (payload: ITicket, customerId: string) => {
   });
   return ticket;
 };
-const getAllTicket = async (query: any, customerId: string) => {
+const getAllTicket = async (query: any, customerId: string, role: string) => {
   const { status, priority, assignedTo } = query;
-  const customer = customerId;
-  const filter: any = { customer };
 
-  if (status) filter.status = status;
+  const filter: any = {};
+
+  if (role === "Customer") {
+    filter.customer = customerId;
+    if (status) filter.status = status;
+  } else {
+    if (status) {
+      filter.status = status;
+    } else {
+      filter.status = { $in: ["Open", "In Progress"] };
+    }
+  }
   if (priority) filter.priority = priority;
   if (assignedTo) filter.assignedTo = assignedTo;
+  if (role === "Customer") {
+    filter.customer = customerId;
+  }
+  if (status) {
+  }
 
-  const tickets = await Ticket.find(filter);
+  const tickets = await Ticket.find(filter)
+    .populate("customer", "name email")
+    .populate("assignedTo", "name email");
+
+  // const tickets = await Ticket.find(filter);
   return tickets;
 };
 const getTicketById = async (id: string, customerId: string) => {
@@ -33,9 +51,9 @@ const getTicketById = async (id: string, customerId: string) => {
     throw new AppError(404, "Ticket not found");
   }
 
-  if (ticket.customer._id.toString() !== customerId) {
-    throw new AppError(403, "Access denied to this ticket");
-  }
+  // if (ticket.customer._id.toString() !== customerId) {
+  //   throw new AppError(403, "Access denied to this ticket");
+  // }
   return ticket;
 };
 
