@@ -45,7 +45,13 @@ const getTicketById = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
 
   const customerId = await req.user?.id;
-  const result = await ticketService.getTicketById(id as string, customerId!);
+  const role = await req.user?.role;
+  const result = await ticketService.getTicketById(
+    id as string,
+    customerId!,
+    role as string,
+  );
+
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

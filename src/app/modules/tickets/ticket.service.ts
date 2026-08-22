@@ -44,16 +44,21 @@ const getAllTicket = async (query: any, customerId: string, role: string) => {
   // const tickets = await Ticket.find(filter);
   return tickets;
 };
-const getTicketById = async (id: string, customerId: string) => {
-  const ticket = await Ticket.findById(id);
+const getTicketById = async (id: string, customerId: string, role: string) => {
+  const ticket = await Ticket.findById(id)
+    .populate("customer", "name email")
+    .populate("assignedTo", "name email");
 
   if (!ticket) {
     throw new AppError(404, "Ticket not found");
   }
 
-  // if (ticket.customer._id.toString() !== customerId) {
-  //   throw new AppError(403, "Access denied to this ticket");
-  // }
+  // only see can own ticket and all staff can see everyone ticket
+
+  if (role === "Customer" && ticket.customer._id.toString() !== customerId) {
+    throw new AppError(403, "Access denied to this ticket");
+  }
+
   return ticket;
 };
 
