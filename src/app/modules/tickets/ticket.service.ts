@@ -73,17 +73,11 @@ const deleteTicketFromDB = async (id: string) => {
   await Ticket.findByIdAndDelete(id);
   return null;
 };
-const assignTicketUpdate = async (
-  staffId: string,
-  ticket: any,
-  status: any,
-) => {
-  ticket.assignedTo = staffId!;
-
-  ticket.status = status.status;
-
-  const update = await ticket.save();
-  return update;
+const assignTicketUpdate = async (staffId: string, ticket: any) => {
+  ticket.assignedTo = staffId;
+  ticket.status = "In Progress";
+  const result = await ticket.save();
+  return result;
 };
 export const ticketService = {
   createdTicketDb,

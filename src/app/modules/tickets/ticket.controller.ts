@@ -77,28 +77,6 @@ const updateTicket = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const assignTicket = catchAsync(async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const staffId = await req.user?.id!;
-  const status = await req.body;
-  const ticket = await Ticket.findById(id);
-  if (!ticket) {
-    throw new AppError(404, "Ticket not found");
-  }
-
-  const result = await ticketService.assignTicketUpdate(
-    staffId,
-    ticket,
-    status,
-  );
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Ticket assigned successfully",
-    data: result,
-  });
-});
-
 const deleteTicket = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -120,6 +98,26 @@ const deleteTicket = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     success: true,
     message: "Ticket deleted successfully",
+    data: result,
+  });
+});
+
+const assignTicket = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const { staffId } = req.body;
+  const ticket = await Ticket.findById(id);
+  if (!ticket) {
+    throw new AppError(404, "Ticket not found");
+  }
+  if (!staffId) {
+    throw new AppError(404, "This staff is not found");
+  }
+  const result = await ticketService.assignTicketUpdate(staffId, ticket);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Ticket assigned successfully",
     data: result,
   });
 });
