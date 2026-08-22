@@ -76,6 +76,7 @@ const updateTicket = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
 const assignTicket = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   const staffId = await req.user?.id!;
@@ -97,10 +98,37 @@ const assignTicket = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+const deleteTicket = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const ticket = await Ticket.findById(id);
+  if (!ticket) {
+    throw new AppError(httpStatus.NOT_FOUND, "Ticket not found");
+  }
+
+  const isClosed = ticket.status && ticket.status.toLowerCase() === "closed";
+  if (!isClosed) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Only tickets with a 'Closed' status can be deleted.",
+    );
+  }
+
+  const result = await ticketService.deleteTicketFromDB(id as string);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Ticket deleted successfully",
+    data: result,
+  });
+});
+
 export const ticketController = {
   createTicket,
   getAllTickets,
   getTicketById,
   updateTicket,
   assignTicket,
+  deleteTicket,
 };

@@ -69,6 +69,10 @@ const updateTicket = async (id: string, payload: any) => {
   });
   return updatedTicket;
 };
+const deleteTicketFromDB = async (id: string) => {
+  await Ticket.findByIdAndDelete(id);
+  return null;
+};
 const assignTicketUpdate = async (
   staffId: string,
   ticket: any,
@@ -87,4 +91,5 @@ export const ticketService = {
   getTicketById,
   updateTicket,
   assignTicketUpdate,
+  deleteTicketFromDB,
 };

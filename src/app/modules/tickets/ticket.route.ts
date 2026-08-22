@@ -11,7 +11,8 @@ router.get("/:id", auth("Customer", "Staff"), ticketController.getTicketById);
 
 // update ticket
 router.patch("/:id", auth("Customer"), ticketController.updateTicket);
-
+// delete ticket
+router.delete("/:id", auth("Customer"), ticketController.deleteTicket);
 // only for Staff
 router.patch("/:id/assign", auth("Staff"), ticketController.assignTicket);
 
