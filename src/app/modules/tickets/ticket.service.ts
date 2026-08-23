@@ -1,4 +1,5 @@
 import { AppError } from "../../errors/AppError";
+import { Comment } from "./comment.models";
 import { ITicket } from "./ticket.interface";
 import { Ticket } from "./ticket.model";
 
@@ -79,6 +80,25 @@ const assignTicketUpdate = async (staffId: string, ticket: any) => {
   const result = await ticket.save();
   return result;
 };
+//comments
+const createCommentIntoDb = async (
+  ticketId: string,
+  userId: string,
+  userRole: string,
+  payload: { content: string },
+) => {
+  const comment = await Comment.create({
+    ticket: ticketId,
+    user: userId,
+    content: payload.content,
+  });
+
+  const populatedComment = await Comment.findById(comment._id).populate(
+    "user",
+    "name email role",
+  );
+  return populatedComment;
+};
 export const ticketService = {
   createdTicketDb,
   getAllTicket,
@@ -86,4 +106,5 @@ export const ticketService = {
   updateTicket,
   assignTicketUpdate,
   deleteTicketFromDB,
+  createCommentIntoDb,
 };

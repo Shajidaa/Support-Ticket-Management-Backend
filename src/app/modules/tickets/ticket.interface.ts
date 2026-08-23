@@ -13,3 +13,11 @@ export interface ITicket {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface IComment {
+  ticket: Types.ObjectId;
+  user: Types.ObjectId;
+  content: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}

@@ -122,6 +122,41 @@ const assignTicket = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+//comments
+
+const addCommentToTicket = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const ticketId = id as string;
+  const payload = req.body;
+  const userId = req.user?.id as string;
+  const userRole = req.user?.role as string;
+  const ticket = await Ticket.findById(ticketId);
+  if (!ticket) {
+    throw new AppError(httpStatus.NOT_FOUND, "Ticket not found");
+  }
+
+  if (userRole === "Customer" && ticket.customer.toString() !== userId) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "You can only comment on your own tickets",
+    );
+  }
+
+  const result = await ticketService.createCommentIntoDb(
+    ticketId,
+    userId,
+    userRole,
+    payload,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Comment added successfully",
+    data: result,
+  });
+});
+
 export const ticketController = {
   createTicket,
   getAllTickets,
@@ -129,4 +164,5 @@ export const ticketController = {
   updateTicket,
   assignTicket,
   deleteTicket,
+  addCommentToTicket,
 };

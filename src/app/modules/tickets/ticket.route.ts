@@ -16,4 +16,13 @@ router.delete("/:id", auth("Customer"), ticketController.deleteTicket);
 // only for Staff
 router.patch("/:id/assign", auth("Staff"), ticketController.assignTicket);
 
+//comments
+
+router.post(
+  "/:id/comments",
+  auth("Customer", "Staff"),
+  ticketController.addCommentToTicket,
+);
+router.get("/:id/comments", auth("Customer", "Staff"), () => {});
+
 export const TicketRoutes = router;
