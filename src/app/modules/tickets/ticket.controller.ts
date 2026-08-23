@@ -156,7 +156,35 @@ const addCommentToTicket = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const getTicketComments = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const ticketId = id as string;
+  const userId = req.user?.id as string;
+  const userRole = req.user?.role as string;
+  const ticket = await Ticket.findById(ticketId);
+  if (!ticket) {
+    throw new AppError(httpStatus.NOT_FOUND, "Ticket not found");
+  }
 
+  if (userRole === "Customer" && ticket.customer.toString() !== userId) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Access denied to view these comments",
+    );
+  }
+  const result = await ticketService.getTicketCommentsFromDb(
+    ticketId,
+    userId,
+    userRole,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Comments retrieved successfully",
+    data: result,
+  });
+});
 export const ticketController = {
   createTicket,
   getAllTickets,
@@ -165,4 +193,5 @@ export const ticketController = {
   assignTicket,
   deleteTicket,
   addCommentToTicket,
+  getTicketComments,
 };

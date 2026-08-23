@@ -23,6 +23,10 @@ router.post(
   auth("Customer", "Staff"),
   ticketController.addCommentToTicket,
 );
-router.get("/:id/comments", auth("Customer", "Staff"), () => {});
+router.get(
+  "/:id/comments",
+  auth("Customer", "Staff"),
+  ticketController.getTicketComments,
+);
 
 export const TicketRoutes = router;

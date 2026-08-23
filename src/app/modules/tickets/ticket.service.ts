@@ -99,6 +99,18 @@ const createCommentIntoDb = async (
   );
   return populatedComment;
 };
+
+const getTicketCommentsFromDb = async (
+  ticketId: string,
+  userId: string,
+  userRole: string,
+) => {
+  const comments = await Comment.find({ ticket: ticketId })
+    .populate("user", "name email role")
+    .sort({ createdAt: 1 });
+
+  return comments;
+};
 export const ticketService = {
   createdTicketDb,
   getAllTicket,
@@ -107,4 +119,5 @@ export const ticketService = {
   assignTicketUpdate,
   deleteTicketFromDB,
   createCommentIntoDb,
+  getTicketCommentsFromDb,
 };
