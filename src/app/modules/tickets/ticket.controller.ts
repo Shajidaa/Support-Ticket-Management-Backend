@@ -6,7 +6,6 @@ import { sendResponse } from "../../utils/sendResponse";
 import { ticketService } from "./ticket.service";
 import { Ticket } from "./ticket.model";
 import { AppError } from "../../errors/AppError";
-import { appendFileSync } from "node:fs";
 
 // create ticket
 
@@ -107,6 +106,7 @@ const assignTicket = catchAsync(async (req: Request, res: Response) => {
 
   const { staffId } = req.body;
   const ticket = await Ticket.findById(id);
+
   if (!ticket) {
     throw new AppError(404, "Ticket not found");
   }

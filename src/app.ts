@@ -5,6 +5,7 @@ import { notFound } from "./app/middleware/notFound";
 import { globalErrorHandler } from "./app/errors/globalErrorHandler";
 import cookieParser from "cookie-parser";
 import { TicketRoutes } from "./app/modules/tickets/ticket.route";
+import { UserRoute } from "./app/modules/user/user.route";
 
 const app: Application = express();
 
@@ -14,6 +15,7 @@ app.use(cors());
 app.use(cookieParser());
 //  Route
 app.use("/api/v1/auth", AuthRoutes);
+app.use("/api/v1/user", UserRoute);
 app.use("/api/v1/ticket", TicketRoutes);
 
 app.get("/", (req: Request, res: Response) => {
