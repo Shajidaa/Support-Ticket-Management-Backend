@@ -147,6 +147,7 @@ const addCommentToTicket = catchAsync(async (req: Request, res: Response) => {
     userId,
     userRole,
     payload,
+    ticket,
   );
 
   sendResponse(res, {

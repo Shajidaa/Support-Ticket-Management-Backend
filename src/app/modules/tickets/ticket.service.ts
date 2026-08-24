@@ -86,13 +86,17 @@ const createCommentIntoDb = async (
   userId: string,
   userRole: string,
   payload: { content: string },
+  ticket: any,
 ) => {
   const comment = await Comment.create({
     ticket: ticketId,
     user: userId,
     content: payload.content,
   });
-
+  if (userRole === "Staff") {
+    ticket.status = "In Progress";
+    await ticket.save();
+  }
   const populatedComment = await Comment.findById(comment._id).populate(
     "user",
     "name email role",
