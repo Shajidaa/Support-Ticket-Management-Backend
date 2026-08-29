@@ -6,12 +6,27 @@ import { globalErrorHandler } from "./app/errors/globalErrorHandler";
 import cookieParser from "cookie-parser";
 import { TicketRoutes } from "./app/modules/tickets/ticket.route";
 import { UserRoute } from "./app/modules/user/user.route";
+import config from "./app/config";
 
 const app: Application = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests
+      if (!origin) return callback(null, true);
+
+      if (config.allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  }),
+);
 app.use(cookieParser());
 //  Route
 app.use("/api/v1/auth", AuthRoutes);
