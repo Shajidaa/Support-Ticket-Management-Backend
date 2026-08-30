@@ -7,6 +7,7 @@ const router = Router();
 
 router.post("/", auth("Customer"), ticketController.createTicket);
 router.get("/", auth("Customer", "Staff"), ticketController.getAllTickets);
+router.get("/assign-tickets", auth("Staff"), ticketController.getMyAssignedTickets);
 router.get("/:id", auth("Customer", "Staff"), ticketController.getTicketById);
 
 // update ticket

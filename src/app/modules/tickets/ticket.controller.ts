@@ -198,6 +198,17 @@ const getTicketComments = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const getMyAssignedTickets = catchAsync(async (req: Request, res: Response) => {
+  const staffId = req.user?.id as string;
+  const result = await ticketService.getAssignedTickets(staffId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Assigned tickets retrieved successfully",
+    data: result,
+  });
+});
+
 export const ticketController = {
   createTicket,
   getAllTickets,
@@ -207,4 +218,5 @@ export const ticketController = {
   deleteTicket,
   addCommentToTicket,
   getTicketComments,
+  getMyAssignedTickets,
 };

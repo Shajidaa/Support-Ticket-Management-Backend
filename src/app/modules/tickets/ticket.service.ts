@@ -115,6 +115,13 @@ const getTicketCommentsFromDb = async (
 
   return comments;
 };
+const getAssignedTickets = async (staffId: string) => {
+  const tickets = await Ticket.find({ assignedTo: staffId })
+    .populate("customer", "name email")
+    .populate("assignedTo", "name email");
+  return tickets;
+};
+
 export const ticketService = {
   createdTicketDb,
   getAllTicket,
@@ -124,4 +131,5 @@ export const ticketService = {
   deleteTicketFromDB,
   createCommentIntoDb,
   getTicketCommentsFromDb,
+  getAssignedTickets,
 };
