@@ -42,7 +42,7 @@ const getAllTicket = async (query: any, customerId: string, role: string) => {
     .populate("customer", "name email")
     .populate("assignedTo", "name email");
 
-  // const tickets = await Ticket.find(filter);
+
   return tickets;
 };
 const getTicketById = async (id: string, customerId: string, role: string) => {

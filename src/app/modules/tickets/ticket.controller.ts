@@ -66,6 +66,18 @@ const updateTicket = catchAsync(async (req: Request, res: Response) => {
   if (!ticket) {
     throw new AppError(404, "Ticket not found");
   }
+
+  const allowedCustomerStatuses = ["Resolved", "Closed"];
+  if (
+    payload.status &&
+    !allowedCustomerStatuses.includes(payload.status)
+  ) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Customers can only set status to: ${allowedCustomerStatuses.join(", ")}`,
+    );
+  }
+
   const result = await ticketService.updateTicket(id as string, payload);
 
   sendResponse(res, {
