@@ -4,12 +4,12 @@ import { ITicket } from "./ticket.interface";
 import { Ticket } from "./ticket.model";
 
 const createdTicketDb = async (payload: ITicket, customerId: string) => {
-  const { title, description, priority, status } = payload;
+  const { title, description, priority } = payload;
 
   const ticket = await Ticket.create({
     title,
     description,
-    status,
+    status: "Open",
     priority,
     customer: customerId,
   });
