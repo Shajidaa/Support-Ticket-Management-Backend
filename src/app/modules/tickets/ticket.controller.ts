@@ -26,9 +26,9 @@ const createTicket = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllTickets = catchAsync(async (req: Request, res: Response) => {
-  const customerId = await req.user?.id;
-  const role = await req.user?.role;
-  const result = await ticketService.getAllTicket(
+  const customerId = req.user?.id;
+  const role = req.user?.role;
+  const { tickets, meta } = await ticketService.getAllTicket(
     req.query,
     customerId!,
     role as string,
@@ -36,8 +36,9 @@ const getAllTickets = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: " Get tickets successfully",
-    data: result,
+    message: "Get tickets successfully",
+    data: tickets,
+    meta,
   });
 });
 const getTicketById = catchAsync(async (req: Request, res: Response) => {

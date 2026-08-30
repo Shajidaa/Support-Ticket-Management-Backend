@@ -16,7 +16,7 @@ const createdTicketDb = async (payload: ITicket, customerId: string) => {
   return ticket;
 };
 const getAllTicket = async (query: any, customerId: string, role: string) => {
-  const { status, priority, assignedTo } = query;
+  const { status, priority, assignedTo, page = 1, limit = 10 } = query;
 
   const filter: any = {};
 
@@ -32,18 +32,28 @@ const getAllTicket = async (query: any, customerId: string, role: string) => {
   }
   if (priority) filter.priority = priority;
   if (assignedTo) filter.assignedTo = assignedTo;
-  if (role === "Customer") {
-    filter.customer = customerId;
-  }
-  if (status) {
-  }
 
-  const tickets = await Ticket.find(filter)
-    .populate("customer", "name email")
-    .populate("assignedTo", "name email");
+  const pageNum = Number(page);
+  const limitNum = Number(limit);
+  const skip = (pageNum - 1) * limitNum;
 
+  const [tickets, total] = await Promise.all([
+    Ticket.find(filter)
+      .populate("customer", "name email")
+      .populate("assignedTo", "name email")
+      .skip(skip)
+      .limit(limitNum),
+    Ticket.countDocuments(filter),
+  ]);
 
-  return tickets;
+  const meta = {
+    page: pageNum,
+    limit: limitNum,
+    total,
+    totalPages: Math.ceil(total / limitNum),
+  };
+
+  return { tickets, meta };
 };
 const getTicketById = async (id: string, customerId: string, role: string) => {
   const ticket = await Ticket.findById(id)
